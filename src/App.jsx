@@ -1,30 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Car, Search, Phone, Mail, MapPin, Clock, Facebook, Instagram,
-  MessageCircle, ChevronRight, ChevronDown, Gauge, Fuel, Calendar,
-  Settings2, ShieldCheck, BadgeCheck, Handshake, FileCheck2, Wallet,
-  Star, ArrowRight, Menu, X, Upload, CheckCircle2
+  MessageCircle, ChevronDown, Settings2, ShieldCheck, BadgeCheck,
+  Handshake, FileCheck2, Wallet, Star, Menu, X, Upload, CheckCircle2
 } from "lucide-react";
 
 const NAVY = "#0A0F0D";
 const ORANGE = "#10B981";
 const SILVER = "#9CA8A3";
 const LIGHT = "#F4F7F5";
-
-const cars = [
-  { id: 1, make: "Toyota", model: "Corolla Altis", year: 2022, price: 6850000, mileage: 18000, fuel: "Petrol", trans: "Automatic", img: "https://images.unsplash.com/photo-1623869675184-cea38eef4ea7?q=80&w=900&auto=format&fit=crop" },
-  { id: 2, make: "Honda", model: "Civic Oriel", year: 2021, price: 7250000, mileage: 31000, fuel: "Petrol", trans: "Automatic", img: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?q=80&w=900&auto=format&fit=crop" },
-  { id: 3, make: "Suzuki", model: "Swift GLX", year: 2023, price: 4150000, mileage: 9000, fuel: "Petrol", trans: "Manual", img: "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?q=80&w=900&auto=format&fit=crop" },
-  { id: 4, make: "Toyota", model: "Yaris ATIV", year: 2020, price: 4650000, mileage: 42000, fuel: "Petrol", trans: "CVT", img: "https://images.unsplash.com/photo-1583267746897-2cf415887172?q=80&w=900&auto=format&fit=crop" },
-  { id: 5, make: "Kia", model: "Sportage", year: 2022, price: 9450000, mileage: 21000, fuel: "Petrol", trans: "Automatic", img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=900&auto=format&fit=crop" },
-  { id: 6, make: "Honda", model: "City Aspire", year: 2021, price: 5350000, mileage: 27000, fuel: "Petrol", trans: "CVT", img: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=900&auto=format&fit=crop" },
-  { id: 7, make: "Toyota", model: "Fortuner Sigma4", year: 2020, price: 14250000, mileage: 55000, fuel: "Diesel", trans: "Automatic", img: "https://images.unsplash.com/photo-1606152421802-db97b9c7a11b?q=80&w=900&auto=format&fit=crop" },
-  { id: 8, make: "Suzuki", model: "Alto VXL", year: 2023, price: 2950000, mileage: 6000, fuel: "Petrol", trans: "Manual", img: "https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=900&auto=format&fit=crop" },
-];
-
-function fmtPKR(n) {
-  return "PKR " + n.toLocaleString("en-PK");
-}
 
 function useCountUp(target, start) {
   const [val, setVal] = useState(0);
@@ -45,7 +29,7 @@ function useCountUp(target, start) {
 }
 
 function useInView() {
-  const ref = useRef(null);
+  const ref = React.useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -88,7 +72,7 @@ function Stat({ label, target, suffix = "" }) {
   );
 }
 
-function Button({ children, variant = "solid", onClick, className = "", icon: Icon }) {
+function Button({ children, variant = "solid", onClick, className = "", icon: Icon, ...rest }) {
   const base = "relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md font-semibold text-sm transition-all duration-300 active:scale-95 group";
   const styles =
     variant === "solid"
@@ -97,7 +81,7 @@ function Button({ children, variant = "solid", onClick, className = "", icon: Ic
       ? { background: "transparent", color: "#fff", border: `1px solid ${SILVER}` }
       : { background: NAVY, color: "#fff" };
   return (
-    <button onClick={onClick} className={`${base} ${className} hover:-translate-y-0.5 hover:shadow-lg`} style={styles}>
+    <button onClick={onClick} className={`${base} ${className} hover:-translate-y-0.5 hover:shadow-lg`} style={styles} {...rest}>
       <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-white/20 skew-x-12" />
       {Icon && <Icon size={16} />}
       <span className="relative z-10">{children}</span>
@@ -105,27 +89,12 @@ function Button({ children, variant = "solid", onClick, className = "", icon: Ic
   );
 }
 
-function CarCard({ car, onView }) {
+// Shared heading shown at the top of every page when it loads
+function PageHeader({ eyebrow, title }) {
   return (
-    <div className="group rounded-xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border" style={{ borderColor: "#E2E8F0" }}>
-      <div className="relative h-48 overflow-hidden">
-        <img src={car.img} alt={`${car.make} ${car.model}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-        <div className="absolute top-3 left-3 px-2 py-1 rounded text-xs font-bold" style={{ background: ORANGE, color: "#fff" }}>{car.year}</div>
-      </div>
-      <div className="p-4">
-        <h3 className="font-bold text-lg" style={{ color: NAVY }}>{car.make} {car.model}</h3>
-        <div className="flex flex-wrap gap-3 mt-3 text-xs text-slate-500">
-          <span className="flex items-center gap-1"><Gauge size={14} />{car.mileage.toLocaleString()} km</span>
-          <span className="flex items-center gap-1"><Fuel size={14} />{car.fuel}</span>
-          <span className="flex items-center gap-1"><Settings2 size={14} />{car.trans}</span>
-        </div>
-        <div className="flex items-center justify-between mt-4 pt-4 border-t" style={{ borderColor: "#E2E8F0" }}>
-          <span className="font-extrabold" style={{ color: NAVY }}>{fmtPKR(car.price)}</span>
-          <button onClick={() => onView(car)} className="text-sm font-semibold flex items-center gap-1 transition-colors" style={{ color: ORANGE }}>
-            View <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
-      </div>
+    <div className="py-20 px-6 text-center" style={{ background: NAVY }}>
+      <p className="uppercase tracking-widest text-sm" style={{ color: ORANGE }}>{eyebrow}</p>
+      <h1 className="text-4xl md:text-5xl font-extrabold text-white mt-3">{title}</h1>
     </div>
   );
 }
@@ -141,7 +110,6 @@ function Navbar({ page, setPage }) {
   const links = [
     { id: "home", label: "Home" },
     { id: "about", label: "About Us" },
-    { id: "inventory", label: "Inventory" },
     { id: "contact", label: "Contact" },
   ];
   return (
@@ -225,7 +193,7 @@ function Hero({ setPage }) {
           Quality vehicles, fair prices, and a hassle-free experience — from first inspection to final handshake.
         </p>
         <div className="mt-10 flex flex-wrap gap-4 animate-fadein" style={{ animationDelay: ".3s" }}>
-          <Button onClick={() => setPage("inventory")} icon={Search}>Browse Inventory</Button>
+          <Button onClick={() => setPage("contact")} icon={Search}>Get a Valuation</Button>
           <Button variant="outline" onClick={() => setPage("contact")} icon={Handshake}>Sell Your Car</Button>
         </div>
       </div>
@@ -238,7 +206,7 @@ function Hero({ setPage }) {
 
 function Services() {
   const items = [
-    { icon: Car, title: "Buy a Car", desc: "Hand-picked, inspected vehicles ready to drive away." },
+    { icon: Car, title: "Buy a Car", desc: "Hand-picked, inspected vehicles sourced on your behalf." },
     { icon: Handshake, title: "Sell Your Car", desc: "Get a fair, instant offer with no hidden deductions." },
     { icon: BadgeCheck, title: "Trade-In Service", desc: "Trade your current car toward your next one." },
     { icon: ShieldCheck, title: "Vehicle Inspection", desc: "150-point checks by certified technicians." },
@@ -271,7 +239,7 @@ function Services() {
 function WhyChooseUs() {
   const items = [
     "Trusted Local Business", "Verified Vehicles", "Transparent Pricing",
-    "Quick Documentation", "Customer-Focused Service", "Wide Selection of Cars",
+    "Quick Documentation", "Customer-Focused Service", "Personalized Sourcing",
   ];
   return (
     <section className="py-24 px-6" style={{ background: NAVY }}>
@@ -297,7 +265,7 @@ function WhyChooseUs() {
 
 function HowItWorks() {
   const sell = ["Submit Details", "Vehicle Inspection", "Receive Offer", "Instant Payment"];
-  const buy = ["Browse Inventory", "Schedule Inspection", "Secure Financing", "Drive Away"];
+  const buy = ["Tell Us What You Need", "We Source Options", "Schedule Inspection", "Drive Away"];
   const Track = ({ title, steps }) => (
     <div>
       <h3 className="font-bold text-xl mb-6" style={{ color: NAVY }}>{title}</h3>
@@ -377,7 +345,7 @@ function CTASection({ setPage }) {
       <p className="text-white/90 mt-3">Talk to our Lahore team today — no obligation, no pressure.</p>
       <div className="mt-8 flex justify-center gap-4 flex-wrap">
         <button onClick={() => setPage("contact")} className="px-6 py-3 rounded-md font-semibold bg-white hover:-translate-y-0.5 transition-transform" style={{ color: ORANGE }}>Contact Us</button>
-        <button onClick={() => setPage("inventory")} className="px-6 py-3 rounded-md font-semibold border border-white text-white hover:bg-white/10 transition-colors">View Inventory</button>
+        <button onClick={() => setPage("about")} className="px-6 py-3 rounded-md font-semibold border border-white text-white hover:bg-white/10 transition-colors">Learn About Us</button>
       </div>
     </section>
   );
@@ -391,12 +359,12 @@ function Footer({ setPage }) {
           <div className="flex items-center gap-2 text-white font-extrabold text-lg mb-3">
             <Car style={{ color: ORANGE }} /> LAHORE<span style={{ color: ORANGE }}>MOTORS</span>
           </div>
-          <p>Lahore's independent dealership for fair, transparent car buying and selling.</p>
+          <p>Lahore's independent agency for fair, transparent car buying and selling.</p>
         </div>
         <div>
           <h4 className="text-white font-semibold mb-3">Quick links</h4>
           <div className="flex flex-col gap-2">
-            {["home", "about", "inventory", "contact"].map((p) => (
+            {["home", "about", "contact"].map((p) => (
               <button key={p} onClick={() => setPage(p)} className="text-left hover:text-white transition-colors capitalize">{p}</button>
             ))}
           </div>
@@ -421,28 +389,10 @@ function Footer({ setPage }) {
   );
 }
 
-function HomePage({ setPage, onViewCar }) {
+function HomePage({ setPage }) {
   return (
     <>
       <Hero setPage={setPage} />
-      <section className="py-24 px-6 max-w-7xl mx-auto">
-        <Reveal className="flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <p className="text-sm uppercase tracking-widest font-semibold" style={{ color: ORANGE }}>Hand-picked stock</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold mt-2" style={{ color: NAVY }}>Featured cars</h2>
-          </div>
-          <button onClick={() => setPage("inventory")} className="text-sm font-semibold flex items-center gap-1" style={{ color: ORANGE }}>
-            View all inventory <ChevronRight size={16} />
-          </button>
-        </Reveal>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
-          {cars.slice(0, 8).map((c, i) => (
-            <Reveal key={c.id} delay={i * 0.06}>
-              <CarCard car={c} onView={onViewCar} />
-            </Reveal>
-          ))}
-        </div>
-      </section>
       <Services />
       <WhyChooseUs />
       <HowItWorks />
@@ -455,15 +405,12 @@ function HomePage({ setPage, onViewCar }) {
 function AboutPage() {
   return (
     <div className="pt-16">
-      <div className="py-20 px-6 text-center" style={{ background: NAVY }}>
-        <p className="uppercase tracking-widest text-sm" style={{ color: ORANGE }}>About us</p>
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white mt-3">A decade of honest deals in Lahore</h1>
-      </div>
+      <PageHeader eyebrow="About us" title="A decade of honest deals in Lahore" />
       <section className="max-w-5xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12">
         <Reveal>
           <h2 className="text-2xl font-bold" style={{ color: NAVY }}>Our story</h2>
           <p className="mt-4 text-slate-600 leading-relaxed">
-            Lahore Motors began as a small family lot in Gulberg, helping neighbors buy and sell cars without the
+            Lahore Motors began as a small family agency in Gulberg, helping neighbors buy and sell cars without the
             guesswork. Today we serve customers across Lahore, from DHA to Johar Town, with the same promise: a fair
             price, a clean inspection, and paperwork that's done right the first time.
           </p>
@@ -476,7 +423,7 @@ function AboutPage() {
           </p>
           <p className="mt-3 text-slate-600 leading-relaxed">
             <strong style={{ color: NAVY }}>Vision:</strong> to become one of Lahore's most trusted independent car
-            dealerships.
+            agencies.
           </p>
         </Reveal>
       </section>
@@ -528,92 +475,6 @@ function AboutPage() {
   );
 }
 
-function InventoryPage({ onViewCar }) {
-  const [make, setMake] = useState("All");
-  const [fuel, setFuel] = useState("All");
-  const [trans, setTrans] = useState("All");
-  const [maxPrice, setMaxPrice] = useState(15000000);
-
-  const makes = ["All", ...new Set(cars.map((c) => c.make))];
-  const fuels = ["All", ...new Set(cars.map((c) => c.fuel))];
-  const transes = ["All", ...new Set(cars.map((c) => c.trans))];
-
-  const filtered = cars.filter(
-    (c) =>
-      (make === "All" || c.make === make) &&
-      (fuel === "All" || c.fuel === fuel) &&
-      (trans === "All" || c.trans === trans) &&
-      c.price <= maxPrice
-  );
-
-  return (
-    <div className="pt-16">
-      <div className="py-16 px-6 text-center" style={{ background: NAVY }}>
-        <p className="uppercase tracking-widest text-sm" style={{ color: ORANGE }}>Inventory</p>
-        <h1 className="text-4xl font-extrabold text-white mt-3">Browse our current stock</h1>
-      </div>
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 p-5 rounded-xl bg-white shadow-md border" style={{ borderColor: "#E2E8F0" }}>
-          <select value={make} onChange={(e) => setMake(e.target.value)} className="border rounded-md px-3 py-2 text-sm" style={{ borderColor: SILVER }}>
-            {makes.map((m) => <option key={m}>{m}</option>)}
-          </select>
-          <select value={fuel} onChange={(e) => setFuel(e.target.value)} className="border rounded-md px-3 py-2 text-sm" style={{ borderColor: SILVER }}>
-            {fuels.map((m) => <option key={m}>{m}</option>)}
-          </select>
-          <select value={trans} onChange={(e) => setTrans(e.target.value)} className="border rounded-md px-3 py-2 text-sm" style={{ borderColor: SILVER }}>
-            {transes.map((m) => <option key={m}>{m}</option>)}
-          </select>
-          <div className="flex flex-col">
-            <label className="text-xs text-slate-500 mb-1">Max price: {fmtPKR(maxPrice)}</label>
-            <input type="range" min="2000000" max="15000000" step="250000" value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} />
-          </div>
-        </div>
-
-        <p className="text-sm text-slate-500 mt-6">{filtered.length} vehicles found</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-          {filtered.map((c, i) => (
-            <Reveal key={c.id} delay={i * 0.05}>
-              <CarCard car={c} onView={onViewCar} />
-            </Reveal>
-          ))}
-          {filtered.length === 0 && (
-            <p className="col-span-full text-center text-slate-400 py-12">No vehicles match your filters.</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CarModal({ car, onClose }) {
-  if (!car) return null;
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: "rgba(10,15,13,0.75)" }} onClick={onClose}>
-      <div className="bg-white rounded-xl max-w-2xl w-full overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="relative h-64">
-          <img src={car.img} alt="" className="w-full h-full object-cover" />
-          <button onClick={onClose} className="absolute top-3 right-3 bg-white rounded-full p-2 shadow"><X size={18} /></button>
-        </div>
-        <div className="p-6">
-          <h2 className="text-2xl font-extrabold" style={{ color: NAVY }}>{car.make} {car.model}</h2>
-          <p className="font-bold text-xl mt-1" style={{ color: ORANGE }}>{fmtPKR(car.price)}</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 text-sm">
-            <div><Calendar size={16} className="mb-1" style={{ color: ORANGE }} /><p className="text-slate-400">Year</p><p className="font-semibold">{car.year}</p></div>
-            <div><Gauge size={16} className="mb-1" style={{ color: ORANGE }} /><p className="text-slate-400">Mileage</p><p className="font-semibold">{car.mileage.toLocaleString()} km</p></div>
-            <div><Fuel size={16} className="mb-1" style={{ color: ORANGE }} /><p className="text-slate-400">Fuel</p><p className="font-semibold">{car.fuel}</p></div>
-            <div><Settings2 size={16} className="mb-1" style={{ color: ORANGE }} /><p className="text-slate-400">Transmission</p><p className="font-semibold">{car.trans}</p></div>
-          </div>
-          <p className="mt-6 text-slate-600 text-sm leading-relaxed">
-            This {car.year} {car.make} {car.model} has passed our 150-point inspection and comes with verified
-            documentation, ready for immediate transfer.
-          </p>
-          <Button className="mt-6 w-full" icon={Phone}>Contact Dealer</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function Input({ label, type = "text", ...props }) {
   return (
     <label className="block">
@@ -628,10 +489,7 @@ function ContactPage() {
   const [sellSent, setSellSent] = useState(false);
   return (
     <div className="pt-16">
-      <div className="py-16 px-6 text-center" style={{ background: NAVY }}>
-        <p className="uppercase tracking-widest text-sm" style={{ color: ORANGE }}>Get in touch</p>
-        <h1 className="text-4xl font-extrabold text-white mt-3">We're here to help</h1>
-      </div>
+      <PageHeader eyebrow="Get in touch" title="We're here to help" />
 
       <div className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-3 gap-10">
         <div className="space-y-6">
@@ -702,7 +560,6 @@ function ContactPage() {
 
 export default function DealershipSite() {
   const [page, setPage] = useState("home");
-  const [activeCar, setActiveCar] = useState(null);
 
   useEffect(() => { window.scrollTo(0, 0); }, [page]);
 
@@ -716,12 +573,10 @@ export default function DealershipSite() {
         input[type=range] { accent-color: ${ORANGE}; }
       `}</style>
       <Navbar page={page} setPage={setPage} />
-      {page === "home" && <HomePage setPage={setPage} onViewCar={setActiveCar} />}
+      {page === "home" && <HomePage setPage={setPage} />}
       {page === "about" && <AboutPage />}
-      {page === "inventory" && <InventoryPage onViewCar={setActiveCar} />}
       {page === "contact" && <ContactPage />}
       <Footer setPage={setPage} />
-      <CarModal car={activeCar} onClose={() => setActiveCar(null)} />
     </div>
   );
 }
